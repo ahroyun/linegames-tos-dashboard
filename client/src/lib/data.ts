@@ -48,6 +48,12 @@ export const URL_STATUS: UrlStatus[] = [
 // ── 타사 최근 개정 동향 특이사항 ──────────────────────────
 export type ImpactLevel = "high" | "medium" | "low";
 
+export interface ClauseText {
+  label: string;        // 조항 번호/제목
+  original: string;     // 원문 (JP/EN은 원어, KR은 한국어)
+  translation?: string; // JP/EN의 경우 한국어 번역
+}
+
 export interface RecentChange {
   company: string;
   lang: string;
@@ -55,6 +61,8 @@ export interface RecentChange {
   summary: string;
   impact: ImpactLevel;
   impactLabel: string;
+  sourceUrl: string;    // 출처 URL
+  clauses: ClauseText[]; // 관련 조항 원문
 }
 
 export const RECENT_CHANGES: RecentChange[] = [
@@ -65,46 +73,116 @@ export const RECENT_CHANGES: RecentChange[] = [
     summary: "유·무상 전자결제수단(有償/無償電子仮想決済手段) 정의 조항 대폭 강화, PURPLE 코인·포인트 명칭 변경 특약 신설",
     impact: "high",
     impactLabel: "🔴 높음",
+    sourceUrl: "https://info.ncsoft.jp/terms/ncsoft/terms/service-policy",
+    clauses: [
+      {
+        label: "제11조 (전자가상결제수단 정의)",
+        original: "11.「電子仮想決済手段」とは、有料サービスにおいて利用可能な電子的データによる通貨をいいます。電子仮想決済手段のうち、価値保存性、権利行使性および対価発行性を有する電子仮想決済手段を「有償電子仮想決済手段」といい、対価発行性等の要件を満たさないそれ以外の電子仮想決済手段を「無償電子仮想決済手段」というものとします。電子仮想決済手段について、お客様が同種の電子仮想決済手段につき、有償電子仮想決済手段と無償電子仮想決済手段を同時に保有している場合、有償電子仮想決済手段が先に使用されるものとします。有償電子仮想決済手段は、資金決済に関する法律（資金決済法）で規定される「前払式支払手段」として取り扱われ、ゲーム内でのみ取得できる通貨を除く「前払式支払手段」で購入されるその他のアイテム等の仮想資産は、取得をもってこれにかかる商品・サービスの提供がなされたものとし、「前払式支払手段」には該当しないものとして取り扱います。なお、「無償電子仮想決済手段」は「前払式支払手段」には該当しません。",
+        translation: "제11조 「전자가상결제수단」이란 유료 서비스에서 이용 가능한 전자 데이터 통화를 말합니다. 전자가상결제수단 중, 가치보존성·권리행사성·대가발행성을 갖춘 것을 「유상전자가상결제수단」이라 하고, 대가발행성 등의 요건을 충족하지 않는 나머지를 「무상전자가상결제수단」이라 합니다. 동일 종류의 전자가상결제수단을 유상·무상 동시 보유한 경우 유상이 먼저 사용됩니다. 유상전자가상결제수단은 자금결제법상 「선불식 지급수단」으로 취급됩니다.",
+      },
+      {
+        label: "제29조 (PURPLE 코인·포인트 특약)",
+        original: "第29条（PURPLEコイン）\n1.お客様は、PCゲームサービスをご利用する場合に、日本円1円につき1PURPLEコインの比率で設定されるPURPLEコインを電子仮想決済手段としてチャージし、お客様はチャージしたPURPLEコインを利用し、有料サービスの決済をすることができるものとします。\n3.当社は、お客様が一つのアカウントにおいて毎月チャージできるPURPLEコインの上限を次の号に定めるものとします。\n(1) PURPLEコインチャージ日においてお客様が20歳未満の場合、当月のチャージ限度額は日本円20,000円分\n(2) PURPLEコインチャージ日においてお客様が20歳以上の場合、当月のチャージ限度額に制限はありません。",
+        translation: "제29조 (PURPLE코인) 1. 이용자는 PC게임 서비스 이용 시 일본 엔화 1엔당 1 PURPLE코인 비율로 충전하여 유료 서비스 결제에 사용할 수 있습니다. 3. 회사는 월 충전 한도를 정합니다: (1) 충전일 기준 20세 미만: 월 20,000엔 / (2) 20세 이상: 제한 없음.",
+      },
+    ],
   },
   {
     company: "크래프톤",
     lang: "KR/JP/EN",
     effectiveDate: "2026-01-07",
-    summary: "확률형 아이템 정보 공개 메뉴를 별도 네비게이션 항목으로 분리, Class Action Waiver 조항 강화, 서비스 장애 보상 기준 구체화",
+    summary: "확률형 아이템 정보 공개 메뉴를 별도 네비게이션 항목으로 분리, 서비스 장애 보상 기준 구체화 (유료 기간제 아이템 장애시간 3배 연장)",
     impact: "high",
     impactLabel: "🔴 높음",
+    sourceUrl: "https://pubg.com/ko/clause/term_of_service/label_steam/latest",
+    clauses: [
+      {
+        label: "제15조 [6] (서비스 장애 보상 기준)",
+        original: "[6] 회사는 회사가 제공하는 유료서비스 이용과 관련하여 회사의 귀책사유로 사전고지 없이 1일 4시간(누적시간) 이상 연속하여 서비스가 중단되거나 장애가 발생한 경우 유료 기간제 아이템에 한하여 서비스 중단·장애시간의 3배에 해당하는 이용시간을 무료로 연장하고, 이용자는 회사에 대하여 별도의 손해배상을 청구할 수 없습니다. 다만, 회사가 서버점검 등의 사유로 서비스 중단·장애를 사전에 고지하였으나, 서비스 중단·장애시간이 10시간이 초과하는 경우에는 그 초과된 시간만큼 유료 기간제 아이템의 이용시간을 무료로 연장하고, 이용자는 회사에 대하여 별도의 손해배상을 청구할 수 없습니다.",
+      },
+      {
+        label: "네비게이션 — 확률형 아이템 정보 공개 (별도 메뉴 분리)",
+        original: "확률형 아이템 정보 공개 (사이트 상단 네비게이션 별도 항목으로 분리 운영)",
+        translation: "약관 본문이 아닌 사이트 네비게이션 메뉴에 '확률형 아이템 정보 공개' 항목을 독립적으로 배치하여 이용자 접근성을 강화한 구조.",
+      },
+    ],
   },
   {
     company: "넥슨",
     lang: "EN",
     effectiveDate: "2026-03-19",
-    summary: "EU DSA 대응 EEA+UK 보충 조항(Section XIII) 신설 — 불법 콘텐츠 신고 메커니즘, 계정 제재 이의신청 절차, 중재 조항 EEA 예외 명시",
+    summary: "EU 디지털서비스법(DSA) 대응 EEA+UK 보충 조항(Section XIII) 신설 — 불법 콘텐츠 신고 메커니즘, 계정 제재 이의신청 절차, 중재 조항 EEA 예외 명시",
     impact: "medium",
     impactLabel: "🟡 중간",
+    sourceUrl: "https://m.nexon.com/terms/304",
+    clauses: [
+      {
+        label: "Section XIII — EEA/UK Supplemental Terms (계정 제재 및 이의신청)",
+        original: "As a deviation from Sections I and VII of the Terms, Nexon may suspend your access to the Services at any time and without prior notice to you if Nexon has a reasonable belief that (i) you have breached these Terms or (ii) you are using the Services in a manner other than for its intended purpose, or illegally. Where Nexon suspends your access to the Services, it will let you know and explain any options you have to request a review, unless doing so may: (i) expose Nexon or others to legal liability; (ii) harm other users; (iii) compromise or interfere with the integrity or operation of any of Nexon's Services; (iv) be impracticable given technical limitations; or (v) be prohibited under applicable laws.",
+        translation: "[Section XIII — EEA/UK 보충 조항] 넥슨은 이용자가 약관을 위반했거나 서비스를 불법적으로 이용한다고 합리적으로 판단하는 경우 사전 통지 없이 서비스 접근을 정지할 수 있습니다. 단, 정지 시 이용자에게 이의신청 방법을 안내해야 합니다(법적 책임 노출·타 이용자 피해·서비스 무결성 훼손 등의 경우 제외).",
+      },
+      {
+        label: "Section XIII — DSA 불법 콘텐츠 신고 메커니즘",
+        original: "To protect our community and comply with the DSA, we may suspend the provision of our services to any user who frequently provides manifestly illegal content. We may also suspend the processing of notices or complaints submitted via our notice-and-action mechanism and internal complaint-handling system where an individual or entity frequently submits manifestly unfounded notices or complaints.",
+        translation: "[DSA 준수] 명백한 불법 콘텐츠를 반복 게시하는 이용자에 대해 서비스 제공을 정지할 수 있습니다. 또한 명백히 근거 없는 신고를 반복 제출하는 경우 신고 처리를 중단할 수 있습니다.",
+      },
+      {
+        label: "Section XIII — 중재 조항 EEA 예외",
+        original: "As a deviation from the introduction terms and Section X of the Terms, the binding arbitration clause and class action waiver do not apply.",
+        translation: "[EEA 이용자 예외] EEA 이용자에게는 구속력 있는 중재 조항 및 집단소송 포기 조항이 적용되지 않습니다.",
+      },
+    ],
   },
   {
     company: "엔씨소프트",
     lang: "EN",
     effectiveDate: "2026-04-15",
-    summary: "Class Action Waiver 및 개인 중재 조항 강화, 1년 소멸시효 명시",
+    summary: "개인 중재 조항 강화 및 Class Action Waiver 명시, 1년 소멸시효 규정 신설",
     impact: "low",
     impactLabel: "🟢 낮음",
+    sourceUrl: "https://www.plaync.com/policy/service/game_en",
+    clauses: [
+      {
+        label: "Section 11.1 — Binding Arbitration (1년 소멸시효)",
+        original: "To the fullest extent permissible by applicable law, all claims against NC, including but not limited to claims arising out of or relating in any way to the Services or the Terms, must be filed within one year after such claim or cause of action arose or it will be forever barred.",
+        translation: "적용 법률이 허용하는 최대 범위 내에서, 서비스 또는 약관과 관련된 NC에 대한 모든 청구는 청구 원인 발생일로부터 1년 이내에 제기되어야 하며, 이를 경과하면 영구적으로 차단됩니다.",
+      },
+      {
+        label: "Section 11.2 — Class Action / Jury Trial Waiver",
+        original: "You and NC agree that, to the fullest extent permitted by law, each party is waiving the right to a trial by jury or to participate as a plaintiff, claimant, or class member in any class, collective, consolidated, private attorney general, or representative proceeding. This means that you and NC may not bring a claim on behalf of a class or group and may not bring a claim on behalf of any other person unless doing so as a parent, guardian, or ward of a minor.",
+        translation: "이용자와 NC는 법이 허용하는 최대 범위 내에서 배심원 재판 권리 및 집단소송·대표소송에 원고·청구인·구성원으로 참여할 권리를 포기합니다. 미성년자의 법정대리인으로서 제기하는 경우는 예외입니다.",
+      },
+    ],
   },
   {
     company: "넷마블",
     lang: "KR",
     effectiveDate: "2025-05-21",
-    summary: "환불 지연이자 조항 신설 (전자상거래법 시행령 §21의3 명시) — 이전 버전(2024-04-16) 대비 추가",
+    summary: "환불 지연이자 조항 신설 — 전자상거래법 시행령 §21의3 명시 (이전 버전 2024-04-16 대비 추가)",
     impact: "medium",
     impactLabel: "🟡 중간",
+    sourceUrl: "https://help.netmarble.com/ko/terms/terms_of_service_ko",
+    clauses: [
+      {
+        label: "제24조 ⑥항 (환불 지연이자)",
+        original: "⑥ 제1항부터 제4항까지의 규정에 따라 청약철회가 이루어질 경우 회사는 지체 없이 회원의 유료 콘텐츠를 회수하고 3영업일 이내에 대금을 환급합니다. 이 경우 회사가 환급을 지연한 때에는 그 지연기간에 대하여 「전자상거래 등에서의 소비자보호에 관한 법률」 및 같은 법 시행령 제21조의3에서 정하는 이율을 곱하여 산정한 지연이자를 지급합니다.",
+      },
+    ],
   },
   {
     company: "카카오게임즈",
     lang: "KR",
     effectiveDate: "2025-07-17",
-    summary: "환불 지연이자 조항 신설 (동일 법령 근거)",
+    summary: "환불 지연이자 조항 신설 — 전자상거래법 시행령 §21의3 동일 근거 적용",
     impact: "medium",
     impactLabel: "🟡 중간",
+    sourceUrl: "https://web-data-cdn.kakaogames.com/real/www/html/terms/index.html?service=S0018&type=T001&lang=ko",
+    clauses: [
+      {
+        label: "제25조 (청약철회 — 환불 지연이자)",
+        original: "제1항부터 제4항까지의 규정에 따라 청약 철회가 이루어질 경우 회사는 지체 없이 회원의 유료 콘텐츠를 회수하고 3영업일 이내에 대금을 환급합니다. 이 경우 회사가 환급을 지연한 때에는 그 지연 기간에 대하여 「전자상거래 등에서의 소비자보호에 관한 법률」 및 같은 법 시행령 제21조의3에서 정하는 이율을 곱하여 산정한 지연이자를 지급합니다.",
+      },
+    ],
   },
 ];
 
