@@ -1,4 +1,4 @@
-https://ahroyun.github.io/name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       report_version:
-        description: "회차 식별자 (예: 2026-H1, 2026-H2)"
+        description: "회차 식별자 (예: 2026-H1, 2026-H2 )"
         required: true
         default: "2026-H1"
 
@@ -21,7 +21,6 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  env:
   REPORT_VERSION: ${{ github.event.inputs.report_version || '2026-H1' }}
 
 jobs:
@@ -50,13 +49,12 @@ jobs:
         env:
           VITE_BASE_URL: /linegames-tos-dashboard/${{ env.REPORT_VERSION }}/
 
-
-
       - name: Copy build to versioned folder
         run: |
           mkdir -p dist/public/${{ env.REPORT_VERSION }}
           cp -r dist/public/assets dist/public/${{ env.REPORT_VERSION }}/assets 2>/dev/null || true
           cp dist/public/index.html dist/public/${{ env.REPORT_VERSION }}/index.html
+          cp dist/public/index.html dist/public/${{ env.REPORT_VERSION }}/404.html
 
       - name: Restore previous versions
         run: |
@@ -122,10 +120,6 @@ jobs:
           </body>
           </html>
           EOF
-
-      - name: Add SPA 404 fallback
-        run: |
-          cp dist/public/${{ env.REPORT_VERSION }}/index.html dist/public/${{ env.REPORT_VERSION }}/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
