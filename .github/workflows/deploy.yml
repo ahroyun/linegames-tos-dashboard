@@ -46,7 +46,8 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build
+        run: pnpm run build -- --base=/linegames-tos-dashboard/${{ env.REPORT_VERSION }}/
+
 
       - name: Copy build to versioned folder
         run: |
