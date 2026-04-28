@@ -4,6 +4,12 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      report_version:
+        description: "회차 식별자 (예: 2026-H1, 2026-H2)"
+        required: true
+        default: "2026-H1"
 
 permissions:
   contents: read
@@ -15,7 +21,8 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  REPORT_VERSION: "2026-H1"
+  env:
+  REPORT_VERSION: ${{ github.event.inputs.report_version || '2026-H1' }}
 
 jobs:
   build:
