@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       report_version:
-        description: "회차 식별자 (예: 2026-H1, 2026-H2 )"
+        description: "회차 식별자 (예: 2026-H1, 2026-H2)"
         required: true
         default: "2026-H1"
 
@@ -84,9 +84,9 @@ jobs:
           print("versions:", versions)
           PYEOF
 
-      - name: Generate root index.html
+      - name: Generate root index.html and 404.html
         run: |
-          cat > dist/public/index.html << 'EOF'
+          cat > dist/public/index.html << 'HTMLEOF'
           <!DOCTYPE html>
           <html lang="ko">
           <head>
@@ -108,7 +108,7 @@ jobs:
             <p>회차별 보고서를 선택하세요.</p>
             <ul id="list"></ul>
             <script>
-              fetch('versions.json').then(r=>r.json()).then(vs=>{
+              fetch('./versions.json').then(r=>r.json()).then(vs=>{
                 const list=document.getElementById('list');
                 vs.forEach(v=>{
                   const li=document.createElement('li');
@@ -119,28 +119,30 @@ jobs:
             </script>
           </body>
           </html>
-          EOF
+          HTMLEOF
 
-      - name: Add root 404.html for SPA routing
-        run: |
-          cat > dist/public/404.html << 'EOF'
+          cat > dist/public/404.html << 'HTMLEOF'
           <!DOCTYPE html>
           <html>
           <head>
             <meta charset="UTF-8">
             <script>
-              var seg = window.location.pathname.split('/').slice(1);
-              var repo = seg[0];
-              var rest = seg.slice(1).join('/');
-              if (rest) {
-                window.location.replace('/' + repo + '/' + rest.split('/')[0] + '/?p=/' + rest.split('/').slice(1).join('/'));
+              var l = window.location;
+              var base = l.pathname.split('/').slice(0, 2).join('/');
+              var rest = l.pathname.slice(base.length);
+              if (rest && rest !== '/') {
+                l.replace(
+                  l.protocol + '//' + l.host + base +
+                  '/?p=' + encodeURIComponent(rest) + l.hash
+                );
+              } else {
+                l.replace(l.protocol + '//' + l.host + base + '/');
               }
             </script>
           </head>
           <body></body>
           </html>
-          EOF
-
+          HTMLEOF
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
