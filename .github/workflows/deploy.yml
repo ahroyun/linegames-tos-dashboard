@@ -121,6 +121,27 @@ jobs:
           </html>
           EOF
 
+      - name: Add root 404.html for SPA routing
+        run: |
+          cat > dist/public/404.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8">
+            <script>
+              var seg = window.location.pathname.split('/').slice(1);
+              var repo = seg[0];
+              var rest = seg.slice(1).join('/');
+              if (rest) {
+                window.location.replace('/' + repo + '/' + rest.split('/')[0] + '/?p=/' + rest.split('/').slice(1).join('/'));
+              }
+            </script>
+          </head>
+          <body></body>
+          </html>
+          EOF
+
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
