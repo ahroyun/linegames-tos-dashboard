@@ -176,7 +176,7 @@ export default function RecentChangesSection() {
       </div>
 
       <p className="text-sm text-muted-foreground leading-relaxed">
-        최근 각 사의 약관 개정 이력을 분석한 결과입니다. 각 항목에서 <strong style={{ color: "oklch(0.72 0.18 178)" }}>조항 원문 보기</strong>를 클릭하면 실제 약관 텍스트를 확인할 수 있으며, JP/EN 조항은 한국어 번역도 제공됩니다.
+        최근 각 사의 약관 개정 이력을 분석한 결과입니다. 각 항목에서 <strong style={{ color: "oklch(0.72 0.18 178)" }}>조항 원문 보기</strong>를 클릭하면 실제 약관 텍스트를 확인할 수 있습니다.
       </p>
 
       {/* Summary row */}
