@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+https://ahroyun.github.io/name: Deploy to GitHub Pages
 
 on:
   push:
@@ -122,6 +122,10 @@ jobs:
           </body>
           </html>
           EOF
+
+      - name: Add SPA 404 fallback
+        run: |
+          cp dist/public/${{ env.REPORT_VERSION }}/index.html dist/public/${{ env.REPORT_VERSION }}/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
