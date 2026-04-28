@@ -11,7 +11,7 @@ interface SidebarProps {
 const NAV_ITEMS: { id: SectionId; label: string; sublabel?: string; icon: React.ReactNode; badge?: string; badgeColor?: string }[] = [
   { id: "overview", label: "개요", sublabel: "Executive Summary", icon: <BarChart3 size={15} /> },
   { id: "url-status", label: "URL 수집 현황", sublabel: "15개사 유효성 검증", icon: <Globe size={15} />, badge: "15/15", badgeColor: "text-green-400" },
-  { id: "recent-changes", label: "타사 개정 특이사항", sublabel: "최근 업데이트", icon: <TrendingUp size={15} />, badge: "6건", badgeColor: "text-yellow-400" },
+  { id: "recent-changes", label: "타사 개정 특이사항", sublabel: "최근 업데이트", icon: <TrendingUp size={15} />, badge: "3건", badgeColor: "text-yellow-400" },
   { id: "kr-comparison", label: "KR 비교 분석", sublabel: "한국어 약관", icon: <Table2 size={15} /> },
   { id: "jp-comparison", label: "JP 비교 분석", sublabel: "일본어 약관", icon: <Table2 size={15} /> },
   { id: "en-comparison", label: "EN 비교 분석", sublabel: "영어 약관", icon: <Table2 size={15} /> },
