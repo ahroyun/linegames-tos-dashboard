@@ -14,19 +14,20 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  REPORT_VERSION: "2026-H1"
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.4.1
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -39,6 +40,77 @@ jobs:
 
       - name: Build
         run: pnpm run build
+
+      - name: Copy build to versioned folder
+        run: |
+          mkdir -p dist/public/${{ env.REPORT_VERSION }}
+          cp -r dist/public/assets dist/public/${{ env.REPORT_VERSION }}/assets 2>/dev/null || true
+          cp dist/public/index.html dist/public/${{ env.REPORT_VERSION }}/index.html
+
+      - name: Restore previous versions
+        run: |
+          git fetch origin gh-pages 2>/dev/null || true
+          if git show-ref --verify --quiet refs/remotes/origin/gh-pages; then
+            tmpdir=$(mktemp -d)
+            git --work-tree="$tmpdir" checkout origin/gh-pages -- . 2>/dev/null || true
+            for dir in "$tmpdir"/*/; do
+              dirname=$(basename "$dir")
+              if [ "$dirname" != "${{ env.REPORT_VERSION }}" ] && [ -f "$dir/index.html" ]; then
+                cp -r "$dir" dist/public/
+              fi
+            done
+          fi
+
+      - name: Generate versions.json
+        run: |
+          python3 - << 'PYEOF'
+          import os, json
+          pub = "dist/public"
+          versions = sorted(
+            [d for d in os.listdir(pub) if os.path.isdir(os.path.join(pub, d)) and os.path.exists(os.path.join(pub, d, "index.html"))],
+            reverse=True
+          )
+          with open(os.path.join(pub, "versions.json"), "w") as f:
+            json.dump(versions, f)
+          print("versions:", versions)
+          PYEOF
+
+      - name: Generate root index.html
+        run: |
+          cat > dist/public/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="ko">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>라인게임즈 이용약관 벤치마킹 모니터링</title>
+            <style>
+              body{font-family:sans-serif;max-width:600px;margin:80px auto;padding:0 24px;background:#0f1117;color:#e2e8f0}
+              h1{font-size:1.4rem;margin-bottom:8px}
+              p{color:#94a3b8;font-size:.9rem;margin-bottom:32px}
+              ul{list-style:none;padding:0}
+              li{margin-bottom:12px}
+              a{display:block;padding:16px 20px;background:#1e2433;border:1px solid #2d3748;border-radius:8px;color:#63b3ed;text-decoration:none;font-size:.95rem}
+              a:hover{background:#2d3748}
+            </style>
+          </head>
+          <body>
+            <h1>라인게임즈 이용약관 벤치마킹 모니터링</h1>
+            <p>회차별 보고서를 선택하세요.</p>
+            <ul id="list"></ul>
+            <script>
+              fetch('versions.json').then(r=>r.json()).then(vs=>{
+                const list=document.getElementById('list');
+                vs.forEach(v=>{
+                  const li=document.createElement('li');
+                  li.innerHTML='<a href="./'+v+'/">'+v+' 보고서</a>';
+                  list.appendChild(li);
+                });
+              });
+            </script>
+          </body>
+          </html>
+          EOF
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
